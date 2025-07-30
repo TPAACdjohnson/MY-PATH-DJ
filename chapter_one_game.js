@@ -1,5 +1,5 @@
 
-function mergeGameState(existingState) {
+function mergeGameState(gameState) {
     window.gameState = existingState;
     showScene("start");
 }
