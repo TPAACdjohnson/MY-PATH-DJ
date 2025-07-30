@@ -1,97 +1,82 @@
-function mergeGameState(gameState) {
-    // start the game by calling showScene("start");
-    window.gameState = gameState;
+
+function mergeGameState(existingState) {
+    window.gameState = existingState;
     showScene("start");
 }
 
-// Chapter One Game Data
 const chapterOneScenes = {
     start: {
-        text: "CHAPTER ONE: Brooklyn Beginnings\n\nYou are 7 years old. Your mother, an NYPD officer, is raising you and your three brothers alone. Your father is gone. You feel his absence in your chest like a ghost that won't leave. It's winter. The apartment is cold. What do you do?",
+        text: "CHAPTER ONE: Brooklyn Beginnings\n\nYou’re a young Black boy in Brooklyn. No father. Four brothers. Your mother, a NYPD officer, raises you all while fighting battles at work and home. One night, you hear your mom crying. What do you do?",
         options: [
             {
-                text: "Help your mom with the chores",
-                effects: { resilience: 1, purpose: 1 },
-                result: "You take on more than you should. No one thanks you.",
-                next: "school_scene"
+                text: "Stay in your bed. Say nothing.",
+                effects: { dissociation: 1 },
+                result: "You learn early to keep pain private. But it eats you silently.",
+                next: "school"
             },
             {
-                text: "Play with your younger brothers",
-                effects: { authenticity: 1 },
-                result: "You protect their joy with everything you have.",
-                next: "school_scene"
+                text: "Go to her, comfort her.",
+                effects: { resilience: 1, authenticity: 1 },
+                result: "She hugs you like you’re her equal. You feel old too young.",
+                next: "school"
             },
             {
-                text: "Hide in your room",
-                effects: { dissociation: 1, trauma: 1 },
-                result: "You escape into silence, but the pain finds you.",
-                next: "school_scene"
+                text: "Cry too, but alone.",
+                effects: { trauma: 1 },
+                result: "Your tears become invisible ink in your story.",
+                next: "school"
             }
         ]
     },
-    school_scene: {
-        text: "You start school. You're one of the only Black boys in your class. Teachers are harsh. Other kids don't understand your world. You're angry, sad, and confused. What do you do?",
+    school: {
+        text: "At school, you're the quiet one. They call you 'gifted' one day and 'problem' the next. Today a teacher accuses you of cheating. What do you do?",
         options: [
             {
-                text: "Act out in class",
-                effects: { rage: 1, trauma: 1 },
-                result: "They call you a problem. You’re just trying to be heard.",
+                text: "Argue back. You know your worth.",
+                effects: { rage: 1, authenticity: 1 },
+                result: "You speak up. You’re sent to the office anyway.",
                 next: "conclusion"
             },
             {
-                text: "Try to be invisible",
-                effects: { dissociation: 2 },
-                result: "No one sees your pain. Not even the teachers.",
+                text: "Say nothing. Just take the punishment.",
+                effects: { dissociation: 1, trauma: 1 },
+                result: "You learn silence sometimes keeps you safe. But not whole.",
                 next: "conclusion"
             },
             {
-                text: "Focus on reading books",
-                effects: { purpose: 2 },
-                result: "Books become your escape, your shield, your voice.",
+                text: "Ask the teacher why she thinks that.",
+                effects: { resilience: 1 },
+                result: "She’s stunned. No one's ever asked. She reconsiders.",
                 next: "conclusion"
             }
         ]
     },
     conclusion: {
-        text: "Chapter One Concludes. Your earliest wounds begin to shape how you see the world. How do you process it?",
-        options: [
-            {
-                text: "Keep it all inside",
-                effects: { trauma: 2 },
-                result: "You learn to survive, not thrive.",
-                next: null
-            },
-            {
-                text: "Write about it",
-                effects: { authenticity: 2, resilience: 1 },
-                result: "Your words hold your truth when no one else does.",
-                next: null
-            },
-            {
-                text: "Talk to your mom",
-                effects: { resilience: 1, dissociation: -1 },
-                result: "She’s hurting too, but now you both carry it together.",
-                next: null
-            }
-        ]
+        text: "You go home that night. You think about your brothers. You think about who you’re becoming. You’re not a child anymore. Just a survivor with a soft heart under all that armor.",
+        options: []
     }
 };
 
-function showScene(scene) {
-    const sceneData = chapterOneScenes[scene];
-    narrative.textContent = sceneData.text;
+function showScene(sceneId) {
+    const scene = chapterOneScenes[sceneId];
+    narrative.textContent = scene.text;
     choices.innerHTML = "";
 
-    sceneData.options.forEach(option => {
+    if (scene.options.length === 0) {
+        showChapterEndOptions();
+        return;
+    }
+
+    scene.options.forEach(opt => {
         const btn = document.createElement("button");
-        btn.textContent = option.text;
+        btn.textContent = opt.text;
         btn.onclick = () => {
-            updateGameState(option.effects);
-            narrative.textContent = option.result;
-            if (option.next) {
-                setTimeout(() => showScene(option.next), 1500);
+            updateGameState(opt.effects);
+            narrative.textContent = opt.result;
+            if (opt.next) {
+                setTimeout(() => showScene(opt.next), 1500);
             } else {
-                setTimeout(() => showChapterEndOptions(), 1500);
+                setTimeout(showChapterEndOptions, 1500);
             }
         };
         choices.appendChild(btn);
@@ -99,23 +84,25 @@ function showScene(scene) {
 }
 
 function showChapterEndOptions() {
-    narrative.textContent += "\n\n✨ You’ve reached the end of Chapter One.";
+    narrative.textContent += "\n\n📘 Chapter One Complete.";
     choices.innerHTML = "";
 
     const nextBtn = document.createElement("button");
-    nextBtn.textContent = "Continue to Chapter Two ⏭️";
+    nextBtn.textContent = "➡️ Continue to Chapter Two";
     nextBtn.onclick = () => {
         loadScript("chapter_two_game.js");
     };
 
-    const menuBtn = document.createElement("button");
-    menuBtn.textContent = "Return to Hub 🧭";
-    menuBtn.onclick = () => {
-        window.location.reload(); // Reloads the hub
+    const hubBtn = document.createElement("button");
+    hubBtn.textContent = "🧭 Return to Hub";
+    hubBtn.onclick = () => {
+        location.reload();
     };
 
     choices.appendChild(nextBtn);
-    choices.appendChild(menuBtn);
+    choices.appendChild(hubBtn);
 }
 
-};
+if (typeof mergeGameState !== "function") {
+    showScene("start");
+}
