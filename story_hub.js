@@ -1,7 +1,11 @@
+<<<<<<< HEAD
 // story_hub.js (updated with state continuity and cumulative evaluation)
 // Fix any errors in this script
 // Check this function for logic errors and improve readability
 
+=======
+// story_hub.js (with HUD, chapter nav, and proper state update)
+>>>>>>> eddcb2ba3cb25136921acb2c631727fc085c5e2a
 const narrative = document.getElementById("narrative");
 const choices = document.getElementById("choices");
 
@@ -19,17 +23,13 @@ narrative.textContent = "📖 Choose Your Chapter to Begin";
 choices.innerHTML = "";
 
 const chapters = [
-    {
-        title: "Chapter One: Brooklyn Beginnings",
-        file: "chapter_one_game.js"
-    },
-    {
-        title: "Chapter Two: Georgia Fire",
-        file: "chapter_two_game.js"
-    }
+    { title: "Chapter One: Brooklyn Beginnings", file: "chapter_one_game.js" },
+    { title: "Chapter Two: Georgia Fire", file: "chapter_two_game.js" },
+    { title: "Chapter Three: Navy Flame", file: "chapter_three_game.js" }
 ];
 
-chapters.forEach(chapter => {
+// Create menu buttons for chapters
+chapters.forEach((chapter, index) => {
     const btn = document.createElement("button");
     btn.textContent = chapter.title;
     btn.onclick = () => {
@@ -39,6 +39,10 @@ chapters.forEach(chapter => {
 });
 
 function loadScript(file) {
+    // Remove any previous chapter script
+    const existing = document.querySelector(`script[src="${file}"]`);
+    if (existing) existing.remove();
+
     const script = document.createElement("script");
     script.src = file;
     script.onload = () => {
@@ -49,31 +53,31 @@ function loadScript(file) {
     document.body.appendChild(script);
     narrative.textContent = "Loading " + file + "...";
     choices.innerHTML = "";
+    renderStats(); // Show HUD on chapter load
 }
 
-// This function can be called from chapter files to integrate stats into the story
 function updateGameState(updates) {
     for (const key in updates) {
         if (gameState.hasOwnProperty(key)) {
             gameState[key] += updates[key];
         }
     }
+    renderStats();
 }
 
-// Optionally show final conclusion once all chapters are completed
+function renderStats() {
+    const statsDiv = document.getElementById("stats");
+    if (!statsDiv) return;
+
+    statsDiv.innerHTML = `
+        <strong>🧠 Resilience:</strong> ${gameState.resilience} |
+        <strong>💔 Trauma:</strong> ${gameState.trauma} |
+        <strong>🔥 Authenticity:</strong> ${gameState.authenticity} |
+        <strong>😤 Rage:</strong> ${gameState.rage} |
+        <strong>🌪 Dissociation:</strong> ${gameState.dissociation} |
+        <strong>✝️ Purpose:</strong> ${gameState.purpose}
+    `;
+}
+
 function showFinalConclusion() {
-    const totalScore = gameState.resilience + gameState.authenticity + gameState.purpose - gameState.trauma - gameState.rage - gameState.dissociation;
-    narrative.textContent = "🧭 FINAL PATHWAY\n\n";
-    let result = "";
-
-    if (totalScore >= 10) {
-        result = "🕊️ You transformed your suffering into sacred strength. A healer. A builder. A legacy born of fire.";
-    } else if (totalScore >= 3) {
-        result = "🌘 You endured and adapted. You're still walking, but healing is incomplete. The journey continues.";
-    } else {
-        result = "🧨 The trauma calcified into armor. Protection became isolation. You survived, but not whole.";
-    }
-
-    narrative.textContent += result + "\n\n" + JSON.stringify(gameState, null, 2);
-    choices.innerHTML = "";
-}
+    const totalSc
