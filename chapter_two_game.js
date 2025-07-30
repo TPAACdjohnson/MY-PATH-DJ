@@ -98,23 +98,23 @@ function showScene(scene) {
 }
 
 function showChapterEndOptions() {
-    narrative.textContent += "\n\n🔥 Chapter Two Complete.";
+    narrative.textContent += "\\n\\n📘 Chapter Complete.";
     choices.innerHTML = "";
 
     const nextBtn = document.createElement("button");
-    nextBtn.textContent = "Continue to Chapter Three ⚓";
+    nextBtn.textContent = "➡️ Continue to Next Chapter";
     nextBtn.onclick = () => {
-        loadScript("chapter_three_game.js");
+        loadScript("chapter_TWO_game.js"); // Update per chapter
     };
 
-    const menuBtn = document.createElement("button");
-    menuBtn.textContent = "Return to Hub 🧭";
-    menuBtn.onclick = () => {
-        window.location.reload(); // Return to main hub
+    const hubBtn = document.createElement("button");
+    hubBtn.textContent = "🧭 Return to Menu";
+    hubBtn.onclick = () => {
+        location.reload();
     };
 
     choices.appendChild(nextBtn);
-    choices.appendChild(menuBtn);
+    choices.appendChild(hubBtn);
 }
 
 showScene("start");
