@@ -51,6 +51,17 @@ function loadScript(file) {
     narrative.textContent = "Loading " + file + "...";
     choices.innerHTML = "";
 }
+function renderStats() {
+    const statsDiv = document.getElementById("stats");
+    statsDiv.innerHTML = `
+        <strong>🧠 Resilience:</strong> ${gameState.resilience} |
+        <strong>💔 Trauma:</strong> ${gameState.trauma} |
+        <strong>🔥 Authenticity:</strong> ${gameState.authenticity} |
+        <strong>😤 Rage:</strong> ${gameState.rage} |
+        <strong>🌪 Dissociation:</strong> ${gameState.dissociation} |
+        <strong>✝️ Purpose:</strong> ${gameState.purpose}
+    `;
+}
 
 // Used by chapters to update state
 function updateGameState(updates) {
