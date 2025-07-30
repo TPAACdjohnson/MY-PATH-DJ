@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-// Fix any errors in this script
-// Check this function for logic errors and improve readability
 self.addEventListener('install', e => {
     e.waitUntil(
         caches.open('legacy-store').then(cache => {
@@ -11,7 +8,6 @@ self.addEventListener('install', e => {
                 '/game.js',
                 '/manifest.json'
             ]);
-=======
 const CACHE_NAME = 'my-path-v2'; // Change this on every new deployment!
 const urlsToCache = [
   '/',
@@ -47,7 +43,6 @@ self.addEventListener('activate', (event) => {
             console.log('[ServiceWorker] Removing old cache:', key);
             return caches.delete(key);
           }
->>>>>>> eddcb2ba3cb25136921acb2c631727fc085c5e2a
         })
       )
     )

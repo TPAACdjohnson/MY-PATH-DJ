@@ -1,6 +1,3 @@
-// Fix any errors in this script
-// Check this function for logic errors and improve readability
-
 function mergeGameState(gameState) {
     window.gameState = existingState;
     showScene("start");

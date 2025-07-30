@@ -2,6 +2,7 @@ function mergeGameState(existingState) {
     window.gameState = existingState;
 }
 
+// Chapter Three Game Data
 const chapterThreeScenes = {
     start: {
         text: "CHAPTER THREE: Navy Rebirth\n\nYou’ve enlisted. Air traffic control. Structure. Discipline. Finally, a bed that’s yours and a job with purpose. But it’s not peace. The silence is louder. Faith is a flicker. What do you do?",

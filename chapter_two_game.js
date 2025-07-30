@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-// Fix any errors in this script
-// Check this function for logic errors and improve readability
-const scenes = {
-=======
 
 function mergeGameState(existingState) {
     window.gameState = existingState;
@@ -10,7 +5,7 @@ function mergeGameState(existingState) {
 
 // Chapter Two Game Data
 const chapterTwoScenes = {
->>>>>>> eddcb2ba3cb25136921acb2c631727fc085c5e2a
+
     start: {
         text: "CHAPTER TWO: Georgia Fire\n\nYour mother has just become the first Black female sergeant in Alpharetta PD. No parades, no promotions—just silence. Meanwhile, her second marriage collapses from betrayal. You and your four brothers are raising yourselves. You're the middle child, but the leader. What now?",
         options: [
