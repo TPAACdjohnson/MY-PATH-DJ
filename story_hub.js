@@ -36,23 +36,20 @@ chapters.forEach(ch => {
   choices.appendChild(btn);
 });
 
-function loadChapterScript(file, chapterId) {
-  const script = document.createElement("script");
-  script.src = file;
-  script.onload = () => {
-    if (typeof mergeGameState === "function") {
-      mergeGameState(gameState);
-    }
-    gameState.chapterHistory.push(chapterId);
+function loadScript(file) {
+    const existing = document.querySelector(`script[src="${file}"]`);
+    if (existing) existing.remove(); // Remove previous chapter script
 
-    // Show final conclusion if all chapters done
-    if (gameState.chapterHistory.length === chapters.length) {
-      setTimeout(() => showFinalConclusion(), 4000);
-    }
-  };
-  document.body.appendChild(script);
-  narrative.textContent = `📘 Loading ${file}...`;
-  choices.innerHTML = "";
+    const script = document.createElement("script");
+    script.src = file;
+    script.onload = () => {
+        if (typeof mergeGameState === 'function') {
+            mergeGameState(gameState);
+        }
+    };
+    document.body.appendChild(script);
+    narrative.textContent = "Loading " + file + "...";
+    choices.innerHTML = "";
 }
 
 // Used by chapters to update state
