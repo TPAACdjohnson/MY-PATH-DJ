@@ -1,4 +1,6 @@
-function mergeGameState(gameState) {
+function mergeGameState(state, renderHUD, nextChapterMenu) {
+    // Game logic...
+}
     window.gameState = existingState;
     showScene("start");
 }
@@ -58,32 +60,17 @@ const chapterOneScenes = {
     }
 };
 
-<<<<<<< HEAD
 function showScene(scene) {
     // Display the narrative text
-=======
-function showScene(sceneId) {
-    const scene = chapterOneScenes[sceneId];
->>>>>>> eddcb2ba3cb25136921acb2c631727fc085c5e2a
     narrative.textContent = scene.text;
     // Clear previous choices
     choices.innerHTML = "";
 
-<<<<<<< HEAD
     // Render each option as a button
     scene.options.forEach(option => {
-=======
-    if (scene.options.length === 0) {
-        showChapterEndOptions();
-        return;
-    }
-
-    scene.options.forEach(opt => {
->>>>>>> eddcb2ba3cb25136921acb2c631727fc085c5e2a
         const btn = document.createElement("button");
         btn.textContent = opt.text;
         btn.onclick = () => {
-<<<<<<< HEAD
             // Safely apply effects if present
             if (option.effects && typeof option.effects === "object") {
                 Object.entries(option.effects).forEach(([key, value]) => {
@@ -100,14 +87,6 @@ function showScene(sceneId) {
                 showScene(scenes[option.next]);
             } else {
                 showEnding();
-=======
-            updateGameState(opt.effects);
-            narrative.textContent = opt.result;
-            if (opt.next) {
-                setTimeout(() => showScene(opt.next), 1500);
-            } else {
-                setTimeout(showChapterEndOptions, 1500);
->>>>>>> eddcb2ba3cb25136921acb2c631727fc085c5e2a
             }
         };
         choices.appendChild(btn);
