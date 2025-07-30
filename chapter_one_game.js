@@ -1,9 +1,32 @@
 function mergeGameState(state, renderHUD, nextChapterMenu) {
-    // Game logic...
+    const narrative = document.getElementById("narrative");
+    const choices = document.getElementById("choices");
+
+    narrative.textContent = "📘 Chapter One: Brooklyn Beginnings\n\nYou are a young Black boy in Brooklyn, raised by a single NYPD mother with four sons. Life is loud, fast, and deeply unjust...";
+
+    choices.innerHTML = "";
+
+    const option1 = document.createElement("button");
+    option1.textContent = "Stand up to a bully in school";
+    option1.onclick = () => {
+        state.resilience += 2;
+        state.rage += 1;
+        renderHUD();
+        nextChapterMenu();
+    };
+    choices.appendChild(option1);
+
+    const option2 = document.createElement("button");
+    option2.textContent = "Stay quiet and go home";
+    option2.onclick = () => {
+        state.dissociation += 1;
+        state.trauma += 1;
+        renderHUD();
+        nextChapterMenu();
+    };
+    choices.appendChild(option2);
 }
-    window.gameState = existingState;
-    showScene("start");
-}
+
 // Start the game
  showScene("start");
 
