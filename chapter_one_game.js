@@ -1,5 +1,7 @@
-function mergeGameState(existingState) {
-    window.gameState = existingState;
+function mergeGameState(gameState) {
+    // start the game by calling showScene("start");
+    window.gameState = gameState;
+    showScene("start");
 }
 
 // Chapter One Game Data
