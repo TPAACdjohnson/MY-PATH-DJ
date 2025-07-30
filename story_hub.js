@@ -1,11 +1,3 @@
-<<<<<<< HEAD
-// story_hub.js (updated with state continuity and cumulative evaluation)
-// Fix any errors in this script
-// Check this function for logic errors and improve readability
-
-=======
-// story_hub.js (with HUD, chapter nav, and proper state update)
->>>>>>> eddcb2ba3cb25136921acb2c631727fc085c5e2a
 const narrative = document.getElementById("narrative");
 const choices = document.getElementById("choices");
 
