@@ -121,5 +121,3 @@ function showChapterEndOptions() {
 showScene("start");
 
 };
-
-showScene(scenes.start);
