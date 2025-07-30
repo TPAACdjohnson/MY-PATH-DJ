@@ -118,6 +118,4 @@ function showChapterEndOptions() {
     choices.appendChild(menuBtn);
 }
 
-showScene("start");
-
 };
