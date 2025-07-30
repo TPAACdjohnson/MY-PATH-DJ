@@ -1,44 +1,40 @@
+// story_hub.js (with HUD, chapter nav, and proper state update)
 const narrative = document.getElementById("narrative");
 const choices = document.getElementById("choices");
 
 let gameState = {
-  resilience: 0,
-  authenticity: 0,
-  trauma: 0,
-  rage: 0,
-  dissociation: 0,
-  purpose: 0,
-  chapterHistory: []
+    resilience: 0,
+    authenticity: 0,
+    trauma: 0,
+    rage: 0,
+    dissociation: 0,
+    purpose: 0,
+    chapterHistory: []
 };
 
-// Reset UI
 narrative.textContent = "📖 Choose Your Chapter to Begin";
 choices.innerHTML = "";
 
-// Define chapters
 const chapters = [
-  { title: "Chapter One: Brooklyn Beginnings", file: "chapter_one_game.js", id: "chapter1" },
-  { title: "Chapter Two: Georgia Fire", file: "chapter_two_game.js", id: "chapter2" },
-  { title: "Chapter Three: Navy Rebirth", file: "chapter_three_game.js", id: "chapter3" }
+    { title: "Chapter One: Brooklyn Beginnings", file: "chapter_one_game.js" },
+    { title: "Chapter Two: Georgia Fire", file: "chapter_two_game.js" },
+    { title: "Chapter Three: Navy Flame", file: "chapter_three_game.js" }
 ];
 
-// Create buttons for each chapter
-chapters.forEach(ch => {
-  const btn = document.createElement("button");
-  btn.textContent = ch.title;
-  btn.onclick = () => {
-    if (!gameState.chapterHistory.includes(ch.id)) {
-      loadChapterScript(ch.file, ch.id);
-    } else {
-      alert("You’ve already completed this chapter.");
-    }
-  };
-  choices.appendChild(btn);
+// Create menu buttons for chapters
+chapters.forEach((chapter, index) => {
+    const btn = document.createElement("button");
+    btn.textContent = chapter.title;
+    btn.onclick = () => {
+        loadScript(chapter.file);
+    };
+    choices.appendChild(btn);
 });
 
 function loadScript(file) {
+    // Remove any previous chapter script
     const existing = document.querySelector(`script[src="${file}"]`);
-    if (existing) existing.remove(); // Remove previous chapter script
+    if (existing) existing.remove();
 
     const script = document.createElement("script");
     script.src = file;
@@ -50,9 +46,22 @@ function loadScript(file) {
     document.body.appendChild(script);
     narrative.textContent = "Loading " + file + "...";
     choices.innerHTML = "";
+    renderStats(); // Show HUD on chapter load
 }
+
+function updateGameState(updates) {
+    for (const key in updates) {
+        if (gameState.hasOwnProperty(key)) {
+            gameState[key] += updates[key];
+        }
+    }
+    renderStats();
+}
+
 function renderStats() {
     const statsDiv = document.getElementById("stats");
+    if (!statsDiv) return;
+
     statsDiv.innerHTML = `
         <strong>🧠 Resilience:</strong> ${gameState.resilience} |
         <strong>💔 Trauma:</strong> ${gameState.trauma} |
@@ -63,35 +72,5 @@ function renderStats() {
     `;
 }
 
-// Used by chapters to update state
-function updateGameState(updates) {
-    for (const key in updates) {
-        if (gameState.hasOwnProperty(key)) {
-            gameState[key] += updates[key];
-        }
-    }
-    renderStats(); // Add this line
-}
-
-// Called once all chapters are completed
 function showFinalConclusion() {
-  const { resilience, authenticity, trauma, rage, dissociation, purpose } = gameState;
-  const totalScore = resilience + authenticity + purpose - trauma - rage - dissociation;
-
-  let result = "";
-  if (totalScore >= 10) {
-    result = "🕊️ You transformed pain into purpose. A healer. A force of peace. Legacy in motion.";
-  } else if (totalScore >= 3) {
-    result = "🌒 You endured. You adapted. The wounds still whisper, but the light still flickers.";
-  } else {
-    result = "🧨 Survival came at a cost. You wore armor that no longer fits. The journey is not done.";
-  }
-
-  narrative.textContent = `🧭 FINAL CONCLUSION\n\n${result}\n\n🧠 Mental Profile:\n${JSON.stringify(gameState, null, 2)}`;
-  choices.innerHTML = "";
-
-  const restartBtn = document.createElement("button");
-  restartBtn.textContent = "🔄 Restart Game";
-  restartBtn.onclick = () => location.reload();
-  choices.appendChild(restartBtn);
-}
+    const totalSc
