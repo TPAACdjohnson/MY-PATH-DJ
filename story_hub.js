@@ -1,5 +1,8 @@
+// story_hub.js (stable build)
+
 const narrative = document.getElementById("narrative");
 const choices = document.getElementById("choices");
+const hud = document.getElementById("hud");
 
 let gameState = {
     resilience: 0,
@@ -8,44 +11,74 @@ let gameState = {
     rage: 0,
     dissociation: 0,
     purpose: 0,
-    chapterHistory: []
+    chapterHistory: [],
+    currentChapterIndex: null
 };
-
-narrative.textContent = "📖 Choose Your Chapter to Begin";
-choices.innerHTML = "";
 
 const chapters = [
     { title: "Chapter One: Brooklyn Beginnings", file: "chapter_one_game.js" },
     { title: "Chapter Two: Georgia Fire", file: "chapter_two_game.js" },
-    { title: "Chapter Three: Navy Flame", file: "chapter_three_game.js" }
+    { title: "Chapter Three: Navy & Rebirth", file: "chapter_three_game.js" }
 ];
 
-// Create menu buttons for chapters
-chapters.forEach((chapter, index) => {
-    const btn = document.createElement("button");
-    btn.textContent = chapter.title;
-    btn.onclick = () => {
-        loadScript(chapter.file);
-    };
-    choices.appendChild(btn);
-});
-
-function loadScript(file) {
-    // Remove any previous chapter script
-    const existing = document.querySelector(`script[src="${file}"]`);
-    if (existing) existing.remove();
-
+function loadChapter(index) {
+    gameState.currentChapterIndex = index;
+    const file = chapters[index].file;
     const script = document.createElement("script");
     script.src = file;
     script.onload = () => {
-        if (typeof mergeGameState === 'function') {
-            mergeGameState(gameState);
+        if (typeof mergeGameState === "function") {
+            mergeGameState(gameState, renderHUD, nextChapterMenu);
+        } else {
+            narrative.textContent = "❌ Chapter failed to load: missing mergeGameState()";
         }
     };
     document.body.appendChild(script);
-    narrative.textContent = "Loading " + file + "...";
+    narrative.textContent = "⏳ Loading " + chapters[index].title + "...";
     choices.innerHTML = "";
-    renderStats(); // Show HUD on chapter load
+}
+
+function renderMainMenu() {
+    narrative.textContent = "🎮 Choose Your Chapter to Begin";
+    choices.innerHTML = "";
+    chapters.forEach((ch, i) => {
+        const btn = document.createElement("button");
+        btn.textContent = ch.title;
+        btn.onclick = () => loadChapter(i);
+        choices.appendChild(btn);
+    });
+    renderHUD();
+}
+
+function renderHUD() {
+    hud.innerHTML = `
+        🧠 Resilience: ${gameState.resilience} | 💬 Authenticity: ${gameState.authenticity} | 
+        💢 Rage: ${gameState.rage} | 😶 Dissociation: ${gameState.dissociation} | 
+        🕯️ Purpose: ${gameState.purpose} | 🩸 Trauma: ${gameState.trauma}
+    `;
+}
+
+function nextChapterMenu() {
+    choices.innerHTML = "";
+
+    if (gameState.currentChapterIndex < chapters.length - 1) {
+        const nextBtn = document.createElement("button");
+        nextBtn.textContent = "➡️ Proceed to Next Chapter";
+        nextBtn.onclick = () => loadChapter(gameState.currentChapterIndex + 1);
+        choices.appendChild(nextBtn);
+    } else {
+        const finishBtn = document.createElement("button");
+        finishBtn.textContent = "🏁 Conclude Game";
+        finishBtn.onclick = () => showFinalConclusion();
+        choices.appendChild(finishBtn);
+    }
+
+    const returnBtn = document.createElement("button");
+    returnBtn.textContent = "🔙 Return to Menu";
+    returnBtn.onclick = renderMainMenu;
+    choices.appendChild(returnBtn);
+
+    renderHUD();
 }
 
 function updateGameState(updates) {
@@ -54,22 +87,26 @@ function updateGameState(updates) {
             gameState[key] += updates[key];
         }
     }
-    renderStats();
-}
-
-function renderStats() {
-    const statsDiv = document.getElementById("stats");
-    if (!statsDiv) return;
-
-    statsDiv.innerHTML = `
-        <strong>🧠 Resilience:</strong> ${gameState.resilience} |
-        <strong>💔 Trauma:</strong> ${gameState.trauma} |
-        <strong>🔥 Authenticity:</strong> ${gameState.authenticity} |
-        <strong>😤 Rage:</strong> ${gameState.rage} |
-        <strong>🌪 Dissociation:</strong> ${gameState.dissociation} |
-        <strong>✝️ Purpose:</strong> ${gameState.purpose}
-    `;
+    renderHUD();
 }
 
 function showFinalConclusion() {
-    const totalSc
+    const totalScore = gameState.resilience + gameState.authenticity + gameState.purpose - gameState.trauma - gameState.rage - gameState.dissociation;
+    let result = "";
+
+    if (totalScore >= 10) {
+        result = "🕊️ You transformed your suffering into sacred strength. A healer. A builder. A legacy born of fire.";
+    } else if (totalScore >= 3) {
+        result = "🌘 You endured and adapted. You're still walking, but healing is incomplete. The journey continues.";
+    } else {
+        result = "🧨 The trauma calcified into armor. Protection became isolation. You survived, but not whole.";
+    }
+
+    narrative.textContent = "🧭 FINAL PATHWAY\n\n" + result + "\n\n" + JSON.stringify(gameState, null, 2);
+    choices.innerHTML = "";
+    renderHUD();
+}
+
+// Initial launch
+renderMainMenu();
+// Ensure the game state is initialized
