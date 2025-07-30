@@ -1,20 +1,48 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Path of Fire: Legacy Protocol</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="manifest" href="manifest.json">
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MY PATH - The Game</title>
+  <style>
+    body {
+      background-color: #111;
+      color: #f5f5f5;
+      font-family: 'Courier New', Courier, monospace;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    #narrative {
+      white-space: pre-wrap;
+      margin-bottom: 20px;
+      font-size: 1.1em;
+      line-height: 1.5em;
+    }
+    #choices button {
+      display: block;
+      margin: 10px 0;
+      padding: 10px 15px;
+      font-size: 1em;
+      background: #333;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    #choices button:hover {
+      background-color: #555;
+    }
+  </style>
 </head>
 <body>
-    <main>
-        <h1>🔥 Path of Fire: Legacy Protocol</h1>
-        <p id="narrative">Welcome to your legacy. Every choice echoes across generations.</p>
-        <div id="choices"></div>
-    </main>
-    <script src="chapter_one_game.js"></script>
-    <script src="chapter_two_game.js"></script>
+  <h1>🎮 MY PATH</h1>
+  <div id="narrative">Loading game engine...</div>
+  <div id="choices"></div>
+
+  <!-- Load the game engine -->
+  <script src="story_hub.js"></script>
 </body>
 </html>
