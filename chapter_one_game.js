@@ -3,6 +3,8 @@ function mergeGameState(existingState) {
     window.gameState = existingState;
     showScene("start");
 }
+// Start the game
+ showScene("start");
 
 const chapterOneScenes = {
     start: {
