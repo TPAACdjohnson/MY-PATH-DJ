@@ -1,3 +1,5 @@
+// Fix any errors in this script
+// Check this function for logic errors and improve readability
 
 const narrative = document.getElementById("narrative");
 const choices = document.getElementById("choices");
@@ -13,16 +15,33 @@ let state = {
 };
 
 function showScene(scene) {
+    // Display the narrative text
     narrative.textContent = scene.text;
+    // Clear previous choices
     choices.innerHTML = "";
+
+    // Render each option as a button
     scene.options.forEach(option => {
         const btn = document.createElement("button");
         btn.textContent = option.text;
         btn.onclick = () => {
-            Object.keys(option.effects).forEach(key => state[key] += option.effects[key]);
+            // Safely apply effects if present
+            if (option.effects && typeof option.effects === "object") {
+                Object.entries(option.effects).forEach(([key, value]) => {
+                    if (state.hasOwnProperty(key) && typeof value === "number") {
+                        state[key] += value;
+                    }
+                });
+            }
+            // Record the result
             state.history.push(option.result);
-            if (option.next) showScene(scenes[option.next]);
-            else showEnding();
+
+            // Move to the next scene or show ending
+            if (option.next && scenes[option.next]) {
+                showScene(scenes[option.next]);
+            } else {
+                showEnding();
+            }
         };
         choices.appendChild(btn);
     });

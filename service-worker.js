@@ -1,4 +1,5 @@
-
+// Fix any errors in this script
+// Check this function for logic errors and improve readability
 self.addEventListener('install', e => {
     e.waitUntil(
         caches.open('legacy-store').then(cache => {

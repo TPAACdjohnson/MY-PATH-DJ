@@ -1,4 +1,5 @@
-
+// Fix any errors in this script
+// Check this function for logic errors and improve readability
 const scenes = {
     start: {
         text: "CHAPTER TWO: Georgia\n\nAfter your mom divorces her cheating husband, she transfers to the Alpharetta Police Department — becoming the first Black female sergeant. No applause. No celebration. Just more silence. What do you do?",
@@ -41,5 +42,90 @@ const scenes = {
         ]
     }
 };
+
+// Assume state, narrative, and choices are defined elsewhere or add them if needed
+const narrative = document.getElementById("narrative");
+const choices = document.getElementById("choices");
+
+let state = {
+    resilience: 4,
+    authenticity: 3,
+    trauma: 3,
+    rage: 2,
+    dissociation: 2,
+    purpose: 1,
+    history: []
+};
+
+function showScene(scene) {
+    // Display the narrative text
+    narrative.textContent = scene.text;
+    // Clear previous choices
+    choices.innerHTML = "";
+
+    // Render each option as a button
+    scene.options.forEach(option => {
+        const btn = document.createElement("button");
+        btn.textContent = option.text;
+        btn.onclick = () => {
+            // Safely apply effects if present
+            if (option.effects && typeof option.effects === "object") {
+                Object.entries(option.effects).forEach(([key, value]) => {
+                    if (state.hasOwnProperty(key) && typeof value === "number") {
+                        state[key] += value;
+                    }
+                });
+            }
+            // Record the result
+            state.history.push(option.result);
+
+            // Move to the next scene or show ending
+            if (option.next && scenes[option.next]) {
+                showScene(scenes[option.next]);
+            } else {
+                showEnding();
+            }
+        };
+        choices.appendChild(btn);
+    });
+}
+
+function showEnding() {
+    choices.innerHTML = "";
+    let summary = "🏁 FINAL OUTCOME:\n\n";
+    summary += `Resilience: ${state.resilience}\n`;
+    summary += `Authenticity: ${state.authenticity}\n`;
+    summary += `Trauma: ${state.trauma}\n`;
+    summary += `Rage: ${state.rage}\n`;
+    summary += `Dissociation: ${state.dissociation}\n`;
+    summary += `Purpose: ${state.purpose}\n\n`;
+
+    if (state.trauma > 8) {
+        narrative.textContent = "🧨 The pain overwhelmed you. Survival became your only language.";
+        summary += "High trauma and low authenticity led to deep wounds. Healing is still possible.";
+    } else if (state.resilience >= 8 && state.authenticity >= 7) {
+        narrative.textContent = "🔥 You found your strength and truth. You built a new foundation.";
+        summary += "You resisted erasure and claimed your story.";
+    } else {
+        narrative.textContent = "🌒 You endured. The journey continues.";
+        summary += "Some cycles were broken. Others remain. The next chapter awaits.";
+    }
+
+    const resultBlock = document.createElement("pre");
+    resultBlock.textContent = summary;
+    narrative.appendChild(resultBlock);
+
+    const historyList = document.createElement("ul");
+    state.history.forEach(entry => {
+        const li = document.createElement("li");
+        li.textContent = entry;
+        historyList.appendChild(li);
+    });
+
+    const historyTitle = document.createElement("h3");
+    historyTitle.textContent = "🧠 Decision History:";
+    narrative.appendChild(historyTitle);
+    narrative.appendChild(historyList);
+}
 
 showScene(scenes.start);

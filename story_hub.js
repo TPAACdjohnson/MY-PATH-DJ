@@ -1,4 +1,6 @@
 // story_hub.js (updated with state continuity and cumulative evaluation)
+// Fix any errors in this script
+// Check this function for logic errors and improve readability
 
 const narrative = document.getElementById("narrative");
 const choices = document.getElementById("choices");
