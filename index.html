@@ -43,6 +43,15 @@
   <div id="choices"></div>
 
   <!-- Load the game engine -->
-  <script src="story_hub.js"></script>
+  <script src="story_hub.js">
+    <script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js')
+      .then(() => console.log("✅ Service Worker Registered"))
+      .catch(error => console.log("❌ Service Worker Error:", error));
+  }
+</script>
+
+  </script>
 </body>
 </html>
