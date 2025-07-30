@@ -1,105 +1,123 @@
+function mergeGameState(existingState) {
+    window.gameState = existingState;
+}
 
-const narrative = document.getElementById("narrative");
-const choices = document.getElementById("choices");
-
-let state = {
-    resilience: 4,
-    authenticity: 3,
-    trauma: 3,
-    rage: 2,
-    dissociation: 2,
-    purpose: 1,
-    history: []
+// Chapter One Game Data
+const chapterOneScenes = {
+    start: {
+        text: "CHAPTER ONE: Brooklyn Beginnings\n\nYou are 7 years old. Your mother, an NYPD officer, is raising you and your three brothers alone. Your father is gone. You feel his absence in your chest like a ghost that won't leave. It's winter. The apartment is cold. What do you do?",
+        options: [
+            {
+                text: "Help your mom with the chores",
+                effects: { resilience: 1, purpose: 1 },
+                result: "You take on more than you should. No one thanks you.",
+                next: "school_scene"
+            },
+            {
+                text: "Play with your younger brothers",
+                effects: { authenticity: 1 },
+                result: "You protect their joy with everything you have.",
+                next: "school_scene"
+            },
+            {
+                text: "Hide in your room",
+                effects: { dissociation: 1, trauma: 1 },
+                result: "You escape into silence, but the pain finds you.",
+                next: "school_scene"
+            }
+        ]
+    },
+    school_scene: {
+        text: "You start school. You're one of the only Black boys in your class. Teachers are harsh. Other kids don't understand your world. You're angry, sad, and confused. What do you do?",
+        options: [
+            {
+                text: "Act out in class",
+                effects: { rage: 1, trauma: 1 },
+                result: "They call you a problem. You’re just trying to be heard.",
+                next: "conclusion"
+            },
+            {
+                text: "Try to be invisible",
+                effects: { dissociation: 2 },
+                result: "No one sees your pain. Not even the teachers.",
+                next: "conclusion"
+            },
+            {
+                text: "Focus on reading books",
+                effects: { purpose: 2 },
+                result: "Books become your escape, your shield, your voice.",
+                next: "conclusion"
+            }
+        ]
+    },
+    conclusion: {
+        text: "Chapter One Concludes. Your earliest wounds begin to shape how you see the world. How do you process it?",
+        options: [
+            {
+                text: "Keep it all inside",
+                effects: { trauma: 2 },
+                result: "You learn to survive, not thrive.",
+                next: null
+            },
+            {
+                text: "Write about it",
+                effects: { authenticity: 2, resilience: 1 },
+                result: "Your words hold your truth when no one else does.",
+                next: null
+            },
+            {
+                text: "Talk to your mom",
+                effects: { resilience: 1, dissociation: -1 },
+                result: "She’s hurting too, but now you both carry it together.",
+                next: null
+            }
+        ]
+    }
 };
 
 function showScene(scene) {
-    narrative.textContent = scene.text;
+    const sceneData = chapterOneScenes[scene];
+    narrative.textContent = sceneData.text;
     choices.innerHTML = "";
-    scene.options.forEach(option => {
+
+    sceneData.options.forEach(option => {
         const btn = document.createElement("button");
         btn.textContent = option.text;
         btn.onclick = () => {
-            Object.keys(option.effects).forEach(key => state[key] += option.effects[key]);
-            state.history.push(option.result);
-            if (option.next) showScene(scenes[option.next]);
-            else showEnding();
+            updateGameState(option.effects);
+            narrative.textContent = option.result;
+            if (option.next) {
+                setTimeout(() => showScene(option.next), 1500);
+            } else {
+                setTimeout(() => showChapterEndOptions(), 1500);
+            }
         };
         choices.appendChild(btn);
     });
 }
 
-function showEnding() {
+function showChapterEndOptions() {
+    narrative.textContent += "\n\n✨ You’ve reached the end of Chapter One.";
     choices.innerHTML = "";
-    let summary = "🏁 FINAL OUTCOME:\n\n";
-    summary += `Resilience: ${state.resilience}\n`;
-    summary += `Authenticity: ${state.authenticity}\n`;
-    summary += `Trauma: ${state.trauma}\n`;
-    summary += `Rage: ${state.rage}\n`;
-    summary += `Dissociation: ${state.dissociation}\n`;
-    summary += `Purpose: ${state.purpose}\n\n`;
 
-    if (state.trauma > 8) {
-        narrative.textContent = "🧨 Your foundation cracked under pressure. Survival became your identity.";
-        summary += "High trauma paired with low authenticity has led to chronic emotional fatigue, mistrust, and identity confusion. Healing is your next frontier.";
-    } else if (state.resilience >= 8 && state.authenticity >= 7) {
-        narrative.textContent = "🔥 You found your fire. You stood firm in truth and built something eternal.";
-        summary += "You resisted the erasure of self. Your voice, your pain, and your love became one sacred mission.";
-    } else {
-        narrative.textContent = "🌒 You endured. But the question remains — did you escape or evolve?";
-        summary += "Survival without integration. Some cycles were broken. Others were inherited. The next chapter will test your synthesis.";
-    }
+    const nextBtn = document.createElement("button");
+    nextBtn.textContent = "Continue to Chapter Two ⏭️";
+    nextBtn.onclick = () => {
+        loadScript("chapter_two_game.js");
+    };
 
-    const resultBlock = document.createElement("pre");
-    resultBlock.textContent = summary;
-    narrative.appendChild(resultBlock);
+    const menuBtn = document.createElement("button");
+    menuBtn.textContent = "Return to Hub 🧭";
+    menuBtn.onclick = () => {
+        window.location.reload(); // Reloads the hub
+    };
 
-    const historyList = document.createElement("ul");
-    state.history.forEach(entry => {
-        const li = document.createElement("li");
-        li.textContent = entry;
-        historyList.appendChild(li);
-    });
-
-    const historyTitle = document.createElement("h3");
-    historyTitle.textContent = "🧠 Decision History:";
-    narrative.appendChild(historyTitle);
-    narrative.appendChild(historyList);
+    choices.appendChild(nextBtn);
+    choices.appendChild(menuBtn);
 }
 
-const scenes = {
-    start: {
-        text: "You're six years old. Your father is gone. Your mother is a NYPD officer raising four boys alone in Brooklyn. Tonight, the house is tense. What do you do?",
-        options: [
-            { text: "Ask why mom is crying", effects: { authenticity: 2, trauma: 1 }, result: "You broke the silence, but it wasn't welcomed.", next: "recess" },
-            { text: "Hug your little brothers", effects: { resilience: 1, purpose: 1 }, result: "You took the role of protector, early.", next: "recess" },
-            { text: "Sit in silence and watch TV", effects: { trauma: 1, dissociation: 1 }, result: "You internalized pain through static noise.", next: "recess" },
-            { text: "Pretend everything is fine", effects: { dissociation: 2 }, result: "You learned the mask early.", next: "recess" }
-        ]
-    },
-    recess: {
-        text: "At school, kids divide by race. You're asked: 'Why is your mom a cop?'",
-        options: [
-            { text: "She's trying to survive", effects: { authenticity: 1, trauma: 1 }, result: "You defended her with painful truth.", next: "visit" },
-            { text: "She's a hero", effects: { resilience: 1, purpose: 1 }, result: "You leaned into strength, even if alone.", next: "visit" },
-            { text: "She's not really a cop", effects: { dissociation: 2 }, result: "You disconnected from her identity to avoid rejection.", next: "visit" }
-        ]
-    },
-    visit: {
-        text: "Your mom visits school in uniform. Teachers treat you differently.",
-        options: [
-            { text: "Use it to gain respect", effects: { resilience: 1, rage: 1 }, result: "Power tasted good but felt fake.", next: "alone" },
-            { text: "Ask her not to come again", effects: { authenticity: 1, trauma: 2 }, result: "You distanced yourself from love out of fear.", next: "alone" },
-            { text: "Say nothing", effects: { trauma: 1, dissociation: 1 }, result: "The weight built silently.", next: "alone" }
-        ]
-    },
-    alone: {
-        text: "Your friends ask where your dad is. The air stiffens.",
-        options: [
-            { text: "Say he left", effects: { authenticity: 2, trauma: 1 }, result: "You embraced the pain head-on.", next: null },
-            { text: "Say he's busy working", effects: { dissociation: 2 }, result: "You constructed a fiction to avoid the ache.", next: null },
-            { text: "Say nothing and walk away", effects: { trauma: 1, rage: 1 }, result: "You bottled the sorrow and let it calcify.", next: null }
-        ]
-    }
+showScene("start");
+
 };
 
 showScene(scenes.start);
