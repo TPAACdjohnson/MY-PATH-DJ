@@ -65,11 +65,12 @@ function renderStats() {
 
 // Used by chapters to update state
 function updateGameState(updates) {
-  for (const key in updates) {
-    if (gameState.hasOwnProperty(key)) {
-      gameState[key] += updates[key];
+    for (const key in updates) {
+        if (gameState.hasOwnProperty(key)) {
+            gameState[key] += updates[key];
+        }
     }
-  }
+    renderStats(); // Add this line
 }
 
 // Called once all chapters are completed
